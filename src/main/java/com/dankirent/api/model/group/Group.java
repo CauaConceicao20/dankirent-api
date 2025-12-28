@@ -1,5 +1,7 @@
-package com.dankirent.api.model.user;
+package com.dankirent.api.model.group;
 
+import com.dankirent.api.model.permission.Permission;
+import com.dankirent.api.model.user.UserGroup;
 import jakarta.persistence.*;
 import lombok.*;
 

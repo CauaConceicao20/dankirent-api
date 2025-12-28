@@ -1,6 +1,6 @@
 package com.dankirent.api.model.user.pk;
 
-import com.dankirent.api.model.user.Group;
+import com.dankirent.api.model.group.Group;
 import com.dankirent.api.model.user.User;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;

@@ -1,5 +1,6 @@
 package com.dankirent.api.model.user;
 
+import com.dankirent.api.model.group.Group;
 import com.dankirent.api.model.user.pk.UserGroupPk;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
