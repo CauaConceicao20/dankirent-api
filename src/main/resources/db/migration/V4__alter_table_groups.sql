@@ -1,0 +1,2 @@
+ALTER TABLE groups ADD COLUMN quantity INT DEFAULT 0;
+
