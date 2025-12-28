@@ -31,6 +31,6 @@ public class Group {
     @OneToMany(mappedBy = "id.group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserGroup> userGroups;
 
-    @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Permission> permissions;
 }
