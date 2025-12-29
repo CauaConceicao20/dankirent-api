@@ -1,5 +1,6 @@
 package com.dankirent.api.model.photo;
 
+import com.dankirent.api.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,13 +20,17 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "file_name")
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
+
+    @Column(name = "file_name", nullable = false)
     private String fileName;
 
-    @Column(name = "content_type")
+    @Column(name = "content_type", nullable = false)
     private String contentType;
 
-    @Column(name = "size")
+    @Column(name = "size", nullable = false)
     private Long size;
 
     @Column(name = "created_at", nullable = false, updatable = false)

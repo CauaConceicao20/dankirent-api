@@ -1,0 +1,2 @@
+ALTER TABLE photos
+ALTER COLUMN user_id SET NOT NULL;
