@@ -1,11 +1,13 @@
 package com.dankirent.api.model.photo.dto;
 
 
+import java.time.LocalDateTime;
+
 public record PhotoResponseDto(
         Long id,
-        String url,
-        String description,
+        String fileName,
         String contentType,
-        Long size
+        Long size,
+        LocalDateTime createdAt
 ) {
 }

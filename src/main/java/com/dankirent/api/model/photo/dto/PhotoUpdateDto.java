@@ -5,10 +5,7 @@ import jakarta.validation.constraints.Size;
 
 public record PhotoUpdateDto(
         @NotBlank
-        String url,
-
-        @NotBlank
-        String description,
+        String fileName,
 
         @NotBlank
         String contentType,
