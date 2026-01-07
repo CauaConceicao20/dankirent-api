@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.br.CPF;
 public record UserRequestDto(
 
         @NotBlank
-        String firsName,
+        String firstName,
 
         @NotBlank
         String lastName,

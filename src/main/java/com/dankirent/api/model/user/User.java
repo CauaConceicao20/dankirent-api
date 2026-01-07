@@ -39,10 +39,6 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,
-            fetch = FetchType.LAZY, optional = false)
-    private Photo photo;
-
     @OneToMany(mappedBy = "id.user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserGroup> userGroups;
 
@@ -54,4 +50,5 @@ public class User {
         this.email = dto.email();
         this.password = dto.password();
     }
+
 }
