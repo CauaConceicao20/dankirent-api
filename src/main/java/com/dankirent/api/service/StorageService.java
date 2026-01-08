@@ -2,7 +2,8 @@ package com.dankirent.api.service;
 
 import com.dankirent.api.exception.personalized.StorageException;
 import com.dankirent.api.infrastructure.storage.FileMetaData;
-import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import java.util.Objects;
 @Service
 public class StorageService {
 
+    private static final Logger log = LoggerFactory.getLogger(StorageService.class);
     private final Path uploadDir;
 
     public StorageService(@Value("${upload.path}") String uploadPath) {
@@ -27,21 +29,27 @@ public class StorageService {
     }
 
     public Boolean uploadImage(MultipartFile file) {
+        log.debug("Iniciando upload de arquivo: {}", file.getOriginalFilename());
         if (!file.isEmpty()) {
+            log.info("Salvando arquivo: {}", file.getOriginalFilename());
             try {
                 Files.createDirectories(uploadDir);
                 Path destination = uploadDir.resolve(Objects.requireNonNull(file.getOriginalFilename()));
 
                 Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-
+                log.info("Arquivo salvo com sucesso: {}", file.getOriginalFilename());
+                return true;
             } catch (IOException exception) {
+                log.error("Erro ao salvar arquivo:", exception);
                 throw new StorageException("Falha ao salvar arquivo");
             }
         }
-        return true;
+        log.warn("Upload ignorado: arquivo vazio ({})", file.getOriginalFilename());
+        return false;
     }
 
     public FileMetaData getMetaData(String fileName) throws IOException {
+        log.debug("Obtendo metadados do arquivo: {}", fileName);
         Path path = uploadDir.resolve(fileName).normalize();
         BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
         return new FileMetaData(fileName, attrs.size(), Files.probeContentType(uploadDir),
