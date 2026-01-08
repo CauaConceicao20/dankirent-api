@@ -14,13 +14,13 @@ public record UserRequestDto(
         @NotBlank
         String lastName,
 
-        @CPF
+        @CPF(message = "CPF inválido")
         String cpf,
 
         @Phone
         String phone,
 
-        @Email
+        @Email(message = "E-mail inválido")
         @NotBlank
         String email,
 
