@@ -5,6 +5,7 @@ import com.dankirent.api.model.user.UserGroup;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,12 +28,9 @@ public class Group {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "quantity")
-    private Integer quantity;
-
     @OneToMany(mappedBy = "id.group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserGroup> userGroups;
+    private Set<UserGroup> userGroups = new HashSet<UserGroup>();
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Permission> permissions;
+    private Set<Permission> permissions = new HashSet<Permission>();
 }

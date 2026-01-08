@@ -5,6 +5,7 @@ import com.dankirent.api.model.user.dto.UserRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "id.user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserGroup> userGroups;
+    private Set<UserGroup> userGroups = new HashSet<UserGroup>();
 
     public User(UserRequestDto dto) {
         this.firstName = dto.firstName();
@@ -50,5 +51,4 @@ public class User {
         this.email = dto.email();
         this.password = dto.password();
     }
-
 }
