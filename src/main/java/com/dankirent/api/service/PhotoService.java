@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,17 +32,17 @@ public class PhotoService implements CrudOperations<Photo> {
     }
 
     @Override
-    public Photo getById(Long id) {
+    public Photo getById(UUID id) {
         return null;
     }
 
     @Override
-    public Photo update(Long id, Photo dto) {
+    public Photo update(UUID id, Photo entity) {
         return null;
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
 
     }
 }

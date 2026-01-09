@@ -8,6 +8,7 @@ import com.dankirent.api.model.user.User;
 import com.dankirent.api.model.user.UserGroup;
 import com.dankirent.api.repository.UserRepository;
 import com.dankirent.api.service.interfaces.CrudOperations;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -46,21 +48,40 @@ public class UserService implements CrudOperations<User> {
 
     @Override
     public List<User> getAll() {
-        return List.of();
+        log.debug("Buscando todos os usuários");
+        return repository.findAll();
     }
 
     @Override
-    public User getById(Long id) {
-        return null;
+    public User getById(UUID id) {
+        log.debug("Buscando usuário por id: {}", id);
+        return repository.findById(id).
+                orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado: id=" + id));
     }
 
     @Override
-    public User update(Long id, User dto) {
-        return null;
+    public User update(UUID id, User userData) {
+        log.debug("Atualizando usuário: id={}", id);
+        User user = getById(id);
+
+        if (userData.getFirstName() != null)
+            user.setFirstName(userData.getFirstName());
+        if (userData.getLastName() != null)
+            user.setLastName(userData.getLastName());
+        if (userData.getPhoneNumber() != null)
+            user.setPhoneNumber(userData.getPhoneNumber());
+
+        log.debug("Dados do usuário atualizados: id={}", id);
+
+        return repository.save(user);
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
+        log.debug("Deletando usuário: id={}", id);
+        User user = getById(id);
+        repository.delete(user);
+        log.info("Usuário deletado com sucesso: id={}", id);
     }
 
     private void assignDefaultGroup(User user) {

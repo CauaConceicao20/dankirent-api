@@ -1,7 +1,7 @@
 package com.dankirent.api.model.user;
 
-import com.dankirent.api.model.photo.Photo;
 import com.dankirent.api.model.user.dto.UserRequestDto;
+import com.dankirent.api.model.user.dto.UserUpdateDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,5 +50,11 @@ public class User {
         this.phoneNumber = dto.phone();
         this.email = dto.email();
         this.password = dto.password();
+    }
+
+    public User(UserUpdateDto dto) {
+        this.firstName = dto.firstName();
+        this.lastName = dto.lastName();
+        this.phoneNumber = dto.phone();
     }
 }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class GroupService implements CrudOperations<Group> {
     }
 
     @Override
-    public Group getById(Long id) {
+    public Group getById(UUID id) {
         return null;
     }
 
@@ -34,12 +35,12 @@ public class GroupService implements CrudOperations<Group> {
     }
 
     @Override
-    public Group update(Long id, Group dto) {
+    public Group update(UUID id, Group entity) {
         return null;
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
 
     }
 }

@@ -1,16 +1,17 @@
 package com.dankirent.api.service.interfaces;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface CrudOperations<T> {
 
-    T create(T dto);
+    T create(T entity);
 
     List<T> getAll();
 
-    T getById(Long id);
+    T getById(UUID id);
 
-    T update(Long id, T dto);
+    T update(UUID id, T entity);
 
-    void delete(Long id);
+    void delete(UUID id);
 }

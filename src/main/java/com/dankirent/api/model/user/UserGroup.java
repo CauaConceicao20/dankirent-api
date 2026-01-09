@@ -5,9 +5,12 @@ import com.dankirent.api.model.user.pk.UserGroupPk;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user_groups")
+@NoArgsConstructor
 public class UserGroup {
 
     @EmbeddedId
