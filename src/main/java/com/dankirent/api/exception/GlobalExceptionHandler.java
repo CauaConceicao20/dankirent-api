@@ -1,6 +1,8 @@
 package com.dankirent.api.exception;
 
+import com.dankirent.api.exception.personalized.FieldValidationException;
 import com.dankirent.api.exception.personalized.StorageException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -58,6 +60,42 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.badRequest().body(errorDetails);
+    }
+
+    @ExceptionHandler(FieldValidationException.class)
+    public ResponseEntity<ErrorDetails> handleFieldValidationException(
+            FieldValidationException ex,
+            HttpServletRequest request
+    ) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                HttpStatus.BAD_REQUEST.value(),
+                "Campo inválido",
+                List.of(new FieldErrorResponse(
+                        ex.getField(),
+                        ex.getMessage()
+                )),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.badRequest().body(errorDetails);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleEntityNotFoundException(
+            EntityNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                HttpStatus.NOT_FOUND.value(),
+                "Recurso não encontrado",
+                List.of(new FieldErrorResponse(
+                        "_global",
+                        ex.getMessage()
+                )),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
