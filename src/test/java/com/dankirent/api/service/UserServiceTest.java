@@ -60,7 +60,7 @@ public class UserServiceTest {
         fileMetaData = new FileMetaData("default_user_photo.png", 766, "image/png",
                 LocalDateTime.of(2023, 1, 1, 12, 0));
 
-        userDataUpdate = new User(null, "UpdatedFirstName", null, null, "71922224444",
+        userDataUpdate = new User(null, "UpdatedFirstName", "UpdatedLastName", null, "71922224444",
                 null, null, new HashSet<>());
     }
 
@@ -147,6 +147,21 @@ public class UserServiceTest {
         User result = service.update(user.getId(), userDataUpdate);
 
         assertEquals("UpdatedFirstName", result.getFirstName());
+        assertEquals("UpdatedLastName", result.getLastName());
+        assertEquals("71922224444", result.getPhoneNumber());
+
+        verify(repository).findById(user.getId());
+        verify(repository).save(user);
+    }
+
+    @Test
+    void shouldUpdateOnlyNonNullFields() {
+        when(repository.findById(user.getId())).thenReturn((Optional.of(user)));
+        when(repository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User result = service.update(user.getId(), new User());
+
+        assertEquals("FirstNameDefault", result.getFirstName());
         assertEquals("LastNameDefault", result.getLastName());
         assertEquals("71922224444", result.getPhoneNumber());
 
