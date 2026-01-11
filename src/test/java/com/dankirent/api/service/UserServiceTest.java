@@ -1,10 +1,12 @@
 package com.dankirent.api.service;
 
+import com.dankirent.api.exception.personalized.StorageException;
 import com.dankirent.api.infrastructure.storage.FileMetaData;
 import com.dankirent.api.model.group.Group;
 import com.dankirent.api.model.photo.Photo;
 import com.dankirent.api.model.user.User;
 import com.dankirent.api.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,9 +20,10 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -44,10 +47,11 @@ public class UserServiceTest {
     User user;
     Group group;
     FileMetaData fileMetaData;
+    User userDataUpdate;
 
     @BeforeEach
     void setUp() {
-        user = new User(null, "FirstName", "LastName", "000.174.205-12", "71922224444",
+        user = new User(UUID.randomUUID(), "FirstNameDefault", "LastNameDefault", "000.174.205-12", "71922224444",
                 "teste122@gmail.com", "password123", new HashSet<>());
 
         group = new Group(UUID.randomUUID(), "USER", "Default user group",
@@ -55,34 +59,133 @@ public class UserServiceTest {
 
         fileMetaData = new FileMetaData("default_user_photo.png", 766, "image/png",
                 LocalDateTime.of(2023, 1, 1, 12, 0));
+
+        userDataUpdate = new User(null, "UpdatedFirstName", null, null, "71922224444",
+                null, null, new HashSet<>());
     }
 
     @Test
-     void shouldCreatUser_whenDataAreValid() throws IOException {
+    void shouldCreatUser_whenDataAreValid() throws IOException {
         when(groupService.getByName("USER")).thenReturn(group);
         when(storageService.getMetaData("default_user_photo.png")).thenReturn(fileMetaData);
         when(repository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         User result = service.create(user);
 
-        assertEquals("FirstName", result.getFirstName());
+        assertEquals("FirstNameDefault", result.getFirstName());
         assertEquals(1, result.getUserGroups().size());
 
         verify(groupService).getByName("USER");
-        verify(repository).save(user);
+        verify(repository).save(any(User.class));
         verify(photoService).create(any(Photo.class));
     }
 
     @Test
-    void shouldGetAllUsers() {
-        List<User> users = Collections.singletonList(user);
+    void shouldThrowEntityNotFoundException_whenGroupNotFoundOnCreateUser() {
+        when(groupService.getByName(anyString())).thenThrow(new EntityNotFoundException());
 
-        when(repository.findAll()).thenReturn(users);
+        assertThrows(EntityNotFoundException.class, () -> {
+            service.create(user);
+        });
+
+        verify(groupService).getByName(anyString());
+        verify(repository, never()).save(any(User.class));
+    }
+
+    @Test
+    void shouldThrowStorageException_whenGetMetaDataFailsOnCreateUser() throws IOException {
+        when(groupService.getByName("USER")).thenReturn(group);
+        when(repository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(storageService.getMetaData(anyString())).thenThrow(new IOException());
+
+        assertThrows(StorageException.class, () -> {
+            service.create(user);
+        });
+
+        verify(groupService).getByName("USER");
+        verify(repository).save(any(User.class));
+        verify(storageService).getMetaData(anyString());
+    }
+
+    @Test
+    void shouldGetAllUsers() {
+        when(repository.findAll()).thenReturn(Collections.singletonList(user));
         List<User> result = service.getAll();
 
         assertEquals(1, result.size());
 
         verify(repository).findAll();
+    }
+
+    @Test
+    void shouldGetUserById_whenUserExists() {
+      when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+
+      User result = service.getById(user.getId());
+
+      assertEquals(user.getId(), result.getId());
+
+      verify(repository).findById(user.getId());
+    }
+
+    @Test
+    void shouldThrowEntityNotFoundException_whenUserNotFoundById() {
+        when(repository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            service.getById(UUID.randomUUID());
+        });
+
+        verify(repository).findById(any(UUID.class));
+    }
+
+    @Test
+    void shouldUpdateUser_whenDataAreValid() {
+        when(repository.findById(user.getId())).thenReturn((Optional.of(user)));
+        when(repository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User result = service.update(user.getId(), userDataUpdate);
+
+        assertEquals("UpdatedFirstName", result.getFirstName());
+        assertEquals("LastNameDefault", result.getLastName());
+        assertEquals("71922224444", result.getPhoneNumber());
+
+        verify(repository).findById(user.getId());
+        verify(repository).save(user);
+    }
+
+    @Test
+    void shouldThrowEntityNotFoundException_whenUserNotFoundOnUpdate() {
+        when(repository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            service.update(UUID.randomUUID(), userDataUpdate);
+        });
+
+        verify(repository).findById(any(UUID.class));
+        verify(repository, never()).save(any(User.class));
+    }
+
+    @Test
+    void shouldDeleteUserById() {
+      when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+
+      service.delete(user.getId());
+
+      verify(repository).findById(user.getId());
+      verify(repository).delete(user);
+    }
+
+    @Test
+    void shouldThrowEntityNotFoundException_whenUserNotFoundOnDelete() {
+        when(repository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            service.delete(UUID.randomUUID());
+        });
+
+        verify(repository).findById(any(UUID.class));
+        verify(repository, never()).delete(any(User.class));
     }
 }
 

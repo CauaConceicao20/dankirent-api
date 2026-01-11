@@ -3,6 +3,7 @@ package com.dankirent.api.service;
 import com.dankirent.api.model.group.Group;
 import com.dankirent.api.repository.GroupRepository;
 import com.dankirent.api.service.interfaces.CrudOperations;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,8 @@ public class GroupService implements CrudOperations<Group> {
     }
 
     public Group getByName(String name) {
-        return repository.findByName(name);
+        return repository.findByName(name).
+                orElseThrow(() -> new EntityNotFoundException("Group não encontrado com nome: " + name));
     }
 
     @Override
