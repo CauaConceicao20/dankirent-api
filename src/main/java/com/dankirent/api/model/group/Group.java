@@ -1,5 +1,7 @@
 package com.dankirent.api.model.group;
 
+import com.dankirent.api.model.group.dto.GroupRequestDto;
+import com.dankirent.api.model.group.dto.GroupUpdateDto;
 import com.dankirent.api.model.permission.Permission;
 import com.dankirent.api.model.user.UserGroup;
 import jakarta.persistence.*;
@@ -33,4 +35,14 @@ public class Group {
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Permission> permissions = new HashSet<Permission>();
+
+    public Group(GroupRequestDto dto) {
+        this.name = dto.name();
+        this.description = dto.description();
+    }
+
+    public Group(GroupUpdateDto dto) {
+        this.name = dto.name();
+        this.description = dto.description();
+    }
 }
