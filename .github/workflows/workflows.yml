@@ -1,0 +1,54 @@
+name: ci-cd
+
+on:
+  push:
+    branches: [ main, develop, feature/** ]
+  pull_request:
+    branches: [ main, develop, feature/** ]
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Validate commits
+        run: |
+          commit_message=$(git log -1 --pretty=format:"%s" HEAD)
+          if [[ ! $commit_message =~ ((build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(.*\))?!?: .*) && ! $commit_message =~ ^Merge ]]; then
+            echo "commit is not valid: '$commit_message'"
+            exit 1
+          fi
+
+  build:
+    needs: preflight
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '19'
+          distribution: 'adopt'
+
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '19'
+          distribution: 'adopt'
+
+      - name: Run tests and generate JaCoCo report
+        run: mvn test jacoco:report
