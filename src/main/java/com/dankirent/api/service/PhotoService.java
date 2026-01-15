@@ -29,6 +29,7 @@ public class PhotoService implements CrudOperations<Photo> {
 
     @Override
     public List<Photo> getAll() {
+        log.debug("Buscando todas as fotos");
         return repository.findAll();
     }
 
@@ -45,6 +46,5 @@ public class PhotoService implements CrudOperations<Photo> {
 
     @Override
     public void delete(UUID id) {
-
     }
 }
