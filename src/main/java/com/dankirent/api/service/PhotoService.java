@@ -3,6 +3,7 @@ package com.dankirent.api.service;
 import com.dankirent.api.model.photo.Photo;
 import com.dankirent.api.repository.PhotoRepository;
 import com.dankirent.api.service.interfaces.CrudOperations;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,8 @@ public class PhotoService implements CrudOperations<Photo> {
 
     @Override
     public Photo getById(UUID id) {
-        return null;
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Foto não encontrada: id=" + id));
     }
 
     @Override
