@@ -28,7 +28,7 @@ public class PhotoService implements CrudOperations<Photo> {
 
     @Override
     public List<Photo> getAll() {
-        return List.of();
+        return repository.findAll();
     }
 
     @Override
