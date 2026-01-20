@@ -43,4 +43,4 @@ public record UserRequestDto(
             throw new FieldValidationException("phone", "Telefone não pode ser vazio");
         }
     }
-}
+    }

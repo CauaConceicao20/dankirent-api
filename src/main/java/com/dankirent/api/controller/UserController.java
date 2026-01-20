@@ -4,11 +4,13 @@ import com.dankirent.api.model.user.User;
 import com.dankirent.api.model.user.dto.UserRequestDto;
 import com.dankirent.api.model.user.dto.UserResponseDto;
 import com.dankirent.api.model.user.dto.UserUpdateDto;
+import com.dankirent.api.service.StorageService;
 import com.dankirent.api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -21,6 +23,7 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService service;
+    private final StorageService storageService;
 
     @PostMapping("/v1/create")
     public ResponseEntity<UserResponseDto> create(@RequestBody @Valid UserRequestDto body, UriComponentsBuilder uriBuilder) {
@@ -47,5 +50,11 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable("id") String id) {
         service.delete(UUID.fromString(id));
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/v1/updateProfilePhoto/{userId}/profile-photo")
+    public ResponseEntity<Void> updateProfilePhoto(@PathVariable("userId") String userId, @RequestParam("file") MultipartFile file) {
+        service.updateProfilePhoto(UUID.fromString(userId), file);
+        return ResponseEntity.ok().build();
     }
 }

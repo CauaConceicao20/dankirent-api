@@ -28,7 +28,7 @@ public class StorageService {
         this.uploadDir = Paths.get(uploadPath);
     }
 
-    public Boolean uploadImage(MultipartFile file) {
+    public void uploadImage(MultipartFile file) {
         log.debug("Iniciando upload de arquivo: {}", file.getOriginalFilename());
         if (!file.isEmpty()) {
             log.info("Salvando arquivo: {}", file.getOriginalFilename());
@@ -38,14 +38,14 @@ public class StorageService {
 
                 Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
                 log.info("Arquivo salvo com sucesso: {}", file.getOriginalFilename());
-                return true;
             } catch (IOException exception) {
                 log.error("Erro ao salvar arquivo:", exception);
                 throw new StorageException("Falha ao salvar arquivo");
             }
+        }else {
+            log.error("Upload ignorado: arquivo vazio ({})", file.getOriginalFilename());
+            throw new StorageException("Arquivo vazio");
         }
-        log.warn("Upload ignorado: arquivo vazio ({})", file.getOriginalFilename());
-        return false;
     }
 
     public FileMetaData getMetaData(String fileName) throws IOException {
@@ -55,5 +55,17 @@ public class StorageService {
         return new FileMetaData(fileName, attrs.size(), Files.probeContentType(uploadDir),
                 LocalDateTime.ofInstant(attrs.creationTime().toInstant(), ZoneId.systemDefault())
         );
+    }
+
+    public void deleteImage(String fileName) {
+        log.debug("Iniciando exclusão do arquivo: {}", fileName);
+        Path path = uploadDir.resolve(fileName).normalize();
+        try {
+            Files.deleteIfExists(path);
+            log.info("Arquivo excluído com sucesso: {}", fileName);
+        } catch (IOException exception) {
+            log.error("Erro ao excluir arquivo:", exception);
+            throw new StorageException("Falha ao excluir arquivo");
+        }
     }
 }

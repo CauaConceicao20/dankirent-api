@@ -35,16 +35,33 @@ public class PhotoService implements CrudOperations<Photo> {
 
     @Override
     public Photo getById(UUID id) {
+        log.debug("Buscando foto por id: {}", id);
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Foto não encontrada: id=" + id));
     }
 
     @Override
     public Photo update(UUID id, Photo entity) {
-        return null;
+        Photo photo = getById(id);
+
+        log.debug("Atualizando foto: id={}", id);
+
+        if(entity.getFileName() != null) photo.setFileName(entity.getFileName());
+        if(entity.getContentType() != null) photo.setContentType(entity.getContentType());
+        if(entity.getSize() != null) photo.setSize(entity.getSize());
+
+        repository.save(photo);
+
+        log.debug("Foto atualizada com sucesso: id={}", id);
+
+        return photo;
     }
 
     @Override
     public void delete(UUID id) {
+        log.debug("Deletando foto por id: {}", id);
+        Photo photo = getById(id);
+        repository.delete(photo);
+        log.debug("Foto deletada com sucesso: id={}", id);
     }
 }

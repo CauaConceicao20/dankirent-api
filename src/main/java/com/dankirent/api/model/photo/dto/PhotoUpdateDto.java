@@ -1,7 +1,9 @@
 package com.dankirent.api.model.photo.dto;
 
+import com.dankirent.api.model.user.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
 public record PhotoUpdateDto(
         @NotBlank
@@ -13,4 +15,11 @@ public record PhotoUpdateDto(
         @Size(min = 1)
         Long size
 ) {
+    public PhotoUpdateDto(MultipartFile file) {
+        this(
+                file.getOriginalFilename(),
+                file.getContentType(),
+                file.getSize()
+        );
+    }
 }

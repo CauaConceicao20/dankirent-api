@@ -1,5 +1,6 @@
 package com.dankirent.api.model.user;
 
+import com.dankirent.api.model.photo.Photo;
 import com.dankirent.api.model.user.dto.UserRequestDto;
 import com.dankirent.api.model.user.dto.UserUpdateDto;
 import jakarta.persistence.*;
@@ -39,6 +40,9 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @OneToOne(mappedBy = "user", optional = false)
+    private Photo photo;
 
     @OneToMany(mappedBy = "id.user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserGroup> userGroups = new HashSet<UserGroup>();

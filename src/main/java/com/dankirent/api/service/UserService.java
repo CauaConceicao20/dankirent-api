@@ -4,6 +4,7 @@ import com.dankirent.api.exception.personalized.StorageException;
 import com.dankirent.api.infrastructure.storage.FileMetaData;
 import com.dankirent.api.model.group.Group;
 import com.dankirent.api.model.photo.Photo;
+import com.dankirent.api.model.photo.dto.PhotoUpdateDto;
 import com.dankirent.api.model.user.User;
 import com.dankirent.api.model.user.UserGroup;
 import com.dankirent.api.repository.UserRepository;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -81,7 +83,19 @@ public class UserService implements CrudOperations<User> {
         log.debug("Deletando usuário: id={}", id);
         User user = getById(id);
         repository.delete(user);
-        log.info("Usuário deletado com sucesso: id={}", id);
+        log.debug("Usuário deletado com sucesso: id={}", id);
+    }
+
+    @Transactional
+    public void updateProfilePhoto(UUID userId, MultipartFile file) {
+        log.debug("Atualizando foto de perfil do usuário: id={}", userId);
+        Photo photo = new Photo(new PhotoUpdateDto(file));
+        User user = getById(userId);
+        String fileName = user.getPhoto().getFileName();
+        storageService.uploadImage(file);
+        photoService.update(user.getPhoto().getId(), photo);
+        storageService.deleteImage(fileName);
+        log.debug("Foto de perfil atualizada com sucesso para o usuário: id={}", userId);
     }
 
     private void assignDefaultGroup(User user) {
