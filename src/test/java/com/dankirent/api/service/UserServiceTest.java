@@ -13,7 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -47,11 +49,17 @@ public class UserServiceTest {
     Group group;
     FileMetaData fileMetaData;
     User userDataUpdate;
+    Photo existingPhoto;
+    MultipartFile file;
 
     @BeforeEach
     void setUp() {
+        file = mock(MultipartFile.class);
+
+        existingPhoto = new Photo(UUID.randomUUID(), user, "old-photo.png", "", 1L, LocalDateTime.now());
+
         user = new User(UUID.randomUUID(), "FirstNameDefault", "LastNameDefault", "000.174.205-12", "71922224444",
-                "teste122@gmail.com", "password123", new HashSet<>());
+                "teste122@gmail.com", "password123", existingPhoto, new HashSet<>());
 
         group = new Group(UUID.randomUUID(), "USER", "Default user group",
                 new HashSet<>(), new HashSet<>());
@@ -60,7 +68,7 @@ public class UserServiceTest {
                 LocalDateTime.of(2023, 1, 1, 12, 0));
 
         userDataUpdate = new User(null, "UpdatedFirstName", "UpdatedLastName", null, "71922224444",
-                null, null, new HashSet<>());
+                null, null, null, new HashSet<>());
     }
 
     @Test
@@ -118,13 +126,13 @@ public class UserServiceTest {
 
     @Test
     void shouldGetUserById_whenUserExists() {
-      when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(repository.findById(user.getId())).thenReturn(Optional.of(user));
 
-      User result = service.getById(user.getId());
+        User result = service.getById(user.getId());
 
-      assertEquals(user.getId(), result.getId());
+        assertEquals(user.getId(), result.getId());
 
-      verify(repository).findById(user.getId());
+        verify(repository).findById(user.getId());
     }
 
     @Test
@@ -182,12 +190,12 @@ public class UserServiceTest {
 
     @Test
     void shouldDeleteUserById() {
-      when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(repository.findById(user.getId())).thenReturn(Optional.of(user));
 
-      service.delete(user.getId());
+        service.delete(user.getId());
 
-      verify(repository).findById(user.getId());
-      verify(repository).delete(user);
+        verify(repository).findById(user.getId());
+        verify(repository).delete(user);
     }
 
     @Test
@@ -200,6 +208,47 @@ public class UserServiceTest {
 
         verify(repository).findById(any(UUID.class));
         verify(repository, never()).delete(any(User.class));
+    }
+
+    @Test
+    void shouldUpdateProfilePhoto_whenUserAndFileAreValid() {
+        when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        service.updateProfilePhoto(user.getId(), file);
+
+        verify(repository).findById(user.getId());
+        verify(storageService).uploadImage(file);
+        verify(photoService).update(eq(existingPhoto.getId()), any(Photo.class));
+        verify(storageService).deleteImage("old-photo.png");
+    }
+
+    @Test
+    void shouldThrowEntityNotFoundException_whenUserNotFoundOnUpdateProfilePhoto() {
+        when(repository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            service.updateProfilePhoto(UUID.randomUUID(), file);
+        });
+
+        verify(repository).findById(any(UUID.class));
+        verify(storageService, never()).uploadImage(any());
+        verify(photoService, never()).update(any(), any());
+        verify(storageService, never()).deleteImage(anyString());
+    }
+
+    @Test
+    void shouldThrowStorageException_whenUploadImageFailsOnUpdateProfilePhoto() {
+        when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(storageService.uploadImage(file)).thenThrow(new StorageException("Upload falhou"));
+
+        assertThrows(StorageException.class, () -> {
+            service.updateProfilePhoto(user.getId(), file);
+        });
+
+        verify(repository).findById(user.getId());
+        verify(storageService).uploadImage(file);
+        verify(photoService, never()).update(any(), any());
+        verify(storageService, never()).deleteImage(anyString());
     }
 }
 
