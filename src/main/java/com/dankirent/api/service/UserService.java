@@ -89,12 +89,13 @@ public class UserService implements CrudOperations<User> {
     @Transactional
     public void updateProfilePhoto(UUID userId, MultipartFile file) {
         log.debug("Atualizando foto de perfil do usuário: id={}", userId);
-        Photo photo = new Photo(new PhotoUpdateDto(file));
         User user = getById(userId);
-        String fileName = user.getPhoto().getFileName();
-        storageService.uploadImage(file);
+        String oldFileName = user.getPhoto().getFileName();
+        String newFilename = storageService.uploadImage(file);
+        Photo photo = new Photo(new PhotoUpdateDto(file));
+        photo.setFileName(newFilename);
         photoService.update(user.getPhoto().getId(), photo);
-        storageService.deleteImage(fileName);
+        storageService.deleteImage(oldFileName);
         log.debug("Foto de perfil atualizada com sucesso para o usuário: id={}", userId);
     }
 

@@ -16,7 +16,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class StorageService {
@@ -28,24 +28,28 @@ public class StorageService {
         this.uploadDir = Paths.get(uploadPath);
     }
 
-    public void uploadImage(MultipartFile file) {
+    public String uploadImage(MultipartFile file) {
         log.debug("Iniciando upload de arquivo: {}", file.getOriginalFilename());
+        String newFileName = null;
         if (!file.isEmpty()) {
             log.info("Salvando arquivo: {}", file.getOriginalFilename());
+            newFileName = UUID.randomUUID().toString() + file.getOriginalFilename();
             try {
                 Files.createDirectories(uploadDir);
-                Path destination = uploadDir.resolve(Objects.requireNonNull(file.getOriginalFilename()));
+                Path destination = uploadDir.resolve(newFileName);
 
                 Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-                log.info("Arquivo salvo com sucesso: {}", file.getOriginalFilename());
+                log.info("Arquivo salvo com sucesso: {}", newFileName);
             } catch (IOException exception) {
                 log.error("Erro ao salvar arquivo:", exception);
                 throw new StorageException("Falha ao salvar arquivo");
             }
-        }else {
-            log.error("Upload ignorado: arquivo vazio ({})", file.getOriginalFilename());
+        } else {
+            log.error("Upload ignorado: arquivo vazio ({})", newFileName);
             throw new StorageException("Arquivo vazio");
         }
+
+        return newFileName;
     }
 
     public FileMetaData getMetaData(String fileName) throws IOException {
