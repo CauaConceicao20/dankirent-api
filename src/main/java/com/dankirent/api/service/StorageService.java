@@ -5,9 +5,11 @@ import com.dankirent.api.infrastructure.storage.FileMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.ssl.SslProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +18,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -33,7 +36,9 @@ public class StorageService {
         String newFileName = null;
         if (!file.isEmpty()) {
             log.info("Salvando arquivo: {}", file.getOriginalFilename());
-            newFileName = UUID.randomUUID().toString() + file.getOriginalFilename();
+            String originalName = Objects.requireNonNull(file.getOriginalFilename());
+            newFileName = (UUID.randomUUID() + originalName.substring(originalName.lastIndexOf(".")))
+                    .replaceAll("[\n\r]", "_");;
             try {
                 Files.createDirectories(uploadDir);
                 Path destination = uploadDir.resolve(newFileName);

@@ -13,8 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -91,9 +89,8 @@ public class UserServiceTest {
     void shouldThrowEntityNotFoundException_whenGroupNotFoundOnCreateUser() {
         when(groupService.getByName(anyString())).thenThrow(new EntityNotFoundException());
 
-        assertThrows(EntityNotFoundException.class, () -> {
-            service.create(user);
-        });
+        assertThrows(EntityNotFoundException.class, () ->
+            service.create(user));
 
         verify(groupService).getByName(anyString());
         verify(repository, never()).save(any(User.class));
@@ -105,9 +102,8 @@ public class UserServiceTest {
         when(repository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(storageService.getMetaData(anyString())).thenThrow(new IOException());
 
-        assertThrows(StorageException.class, () -> {
-            service.create(user);
-        });
+        assertThrows(StorageException.class, () ->
+            service.create(user));
 
         verify(groupService).getByName("USER");
         verify(repository).save(any(User.class));
@@ -139,9 +135,8 @@ public class UserServiceTest {
     void shouldThrowEntityNotFoundException_whenUserNotFoundById() {
         when(repository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> {
-            service.getById(UUID.randomUUID());
-        });
+        assertThrows(EntityNotFoundException.class, () ->
+            service.getById(UUID.randomUUID()));
 
         verify(repository).findById(any(UUID.class));
     }
@@ -180,9 +175,8 @@ public class UserServiceTest {
     void shouldThrowEntityNotFoundException_whenUserNotFoundOnUpdate() {
         when(repository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> {
-            service.update(UUID.randomUUID(), userDataUpdate);
-        });
+        assertThrows(EntityNotFoundException.class, () ->
+            service.update(UUID.randomUUID(), userDataUpdate));
 
         verify(repository).findById(any(UUID.class));
         verify(repository, never()).save(any(User.class));
@@ -226,9 +220,8 @@ public class UserServiceTest {
     void shouldThrowEntityNotFoundException_whenUserNotFoundOnUpdateProfilePhoto() {
         when(repository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> {
-            service.updateProfilePhoto(UUID.randomUUID(), file);
-        });
+        assertThrows(EntityNotFoundException.class,
+                () -> service.updateProfilePhoto(UUID.randomUUID(), file));
 
         verify(repository).findById(any(UUID.class));
         verify(storageService, never()).uploadImage(any());
@@ -241,9 +234,8 @@ public class UserServiceTest {
         when(repository.findById(user.getId())).thenReturn(Optional.of(user));
         when(storageService.uploadImage(file)).thenThrow(new StorageException("Upload falhou"));
 
-        assertThrows(StorageException.class, () -> {
-            service.updateProfilePhoto(user.getId(), file);
-        });
+        assertThrows(StorageException.class, () ->
+            service.updateProfilePhoto(user.getId(), file));
 
         verify(repository).findById(user.getId());
         verify(storageService).uploadImage(file);
