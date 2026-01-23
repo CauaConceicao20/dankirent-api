@@ -5,11 +5,9 @@ import com.dankirent.api.infrastructure.storage.FileMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.ssl.SslProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,10 +33,10 @@ public class StorageService {
         log.debug("Iniciando upload de arquivo: {}", file.getOriginalFilename());
         String newFileName = null;
         if (!file.isEmpty()) {
-            log.info("Salvando arquivo: {}", file.getOriginalFilename());
             String originalName = Objects.requireNonNull(file.getOriginalFilename());
             newFileName = (UUID.randomUUID() + originalName.substring(originalName.lastIndexOf(".")))
-                    .replaceAll("[\n\r]", "_");;
+                    .replaceAll("[\n\r]", "_");
+            log.info("Salvando arquivo: {}", file.getOriginalFilename());
             try {
                 Files.createDirectories(uploadDir);
                 Path destination = uploadDir.resolve(newFileName);
@@ -66,7 +64,7 @@ public class StorageService {
         );
     }
 
-    public void deleteImage(String fileName) {
+    public void deleteFile(String fileName) {
         log.debug("Iniciando exclusão do arquivo: {}", fileName);
         Path path = uploadDir.resolve(fileName).normalize();
         try {

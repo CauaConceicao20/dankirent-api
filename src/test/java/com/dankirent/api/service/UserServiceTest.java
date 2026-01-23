@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     private UserRepository repository;
@@ -213,7 +213,7 @@ public class UserServiceTest {
         verify(repository).findById(user.getId());
         verify(storageService).uploadImage(file);
         verify(photoService).update(eq(existingPhoto.getId()), any(Photo.class));
-        verify(storageService).deleteImage("old-photo.png");
+        verify(storageService).deleteFile("old-photo.png");
     }
 
     @Test
@@ -226,7 +226,7 @@ public class UserServiceTest {
         verify(repository).findById(any(UUID.class));
         verify(storageService, never()).uploadImage(any());
         verify(photoService, never()).update(any(), any());
-        verify(storageService, never()).deleteImage(anyString());
+        verify(storageService, never()).deleteFile(anyString());
     }
 
     @Test
@@ -240,7 +240,7 @@ public class UserServiceTest {
         verify(repository).findById(user.getId());
         verify(storageService).uploadImage(file);
         verify(photoService, never()).update(any(), any());
-        verify(storageService, never()).deleteImage(anyString());
+        verify(storageService, never()).deleteFile(anyString());
     }
 }
 

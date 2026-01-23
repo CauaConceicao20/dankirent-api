@@ -95,7 +95,7 @@ public class UserService implements CrudOperations<User> {
         Photo photo = new Photo(new PhotoUpdateDto(file));
         photo.setFileName(newFilename);
         photoService.update(user.getPhoto().getId(), photo);
-        storageService.deleteImage(oldFileName);
+        storageService.deleteFile(oldFileName);
         log.debug("Foto de perfil atualizada com sucesso para o usuário: id={}", userId);
     }
 
