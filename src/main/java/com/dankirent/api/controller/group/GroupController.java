@@ -1,4 +1,4 @@
-package com.dankirent.api.controller;
+package com.dankirent.api.controller.group;
 
 import com.dankirent.api.model.group.Group;
 import com.dankirent.api.model.group.dto.GroupRequestDto;
@@ -17,10 +17,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("api/group")
 @RequiredArgsConstructor
-public class GroupController {
+public class GroupController implements GroupControllerDoc{
 
     private final GroupService service;
 
+    @Override
     @PostMapping("v1/create")
     public ResponseEntity<GroupResponseDto> create(@RequestBody @Valid GroupRequestDto body, UriComponentsBuilder uriBuilder) {
         Group group = service.create(new Group(body));
@@ -29,6 +30,7 @@ public class GroupController {
         return ResponseEntity.created(uri).body(new GroupResponseDto(group));
     }
 
+    @Override
     @GetMapping("v1/getAll")
     public ResponseEntity<List<GroupResponseDto>> getAll() {
         List<Group> groups = service.getAll();
@@ -36,12 +38,14 @@ public class GroupController {
         return ResponseEntity.ok(responseDtos);
     }
 
+    @Override
     @PutMapping("v1/update/{id}")
     public ResponseEntity<GroupResponseDto> update(@PathVariable("id") String id, @RequestBody @Valid GroupRequestDto body) {
         Group group = service.update(UUID.fromString(id), new Group(body));
         return ResponseEntity.ok(new GroupResponseDto(group));
     }
 
+    @Override
     @DeleteMapping("v1/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") String id) {
         service.delete(UUID.fromString(id));
