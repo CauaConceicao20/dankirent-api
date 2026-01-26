@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,17 +32,19 @@ public class UserService implements CrudOperations<User> {
     private final PhotoService photoService;
     private final StorageService storageService;
     private final GroupService groupService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public User create(User user) {
         log.debug("Criando novo usuário");
         try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             assignDefaultGroup(user);
-            repository.save(user);
-            assignDefaultPhoto(user);
+            User userSaved = repository.save(user);
+            assignDefaultPhoto(userSaved);
             log.info("Usuário criado com sucesso: id={}", user.getId());
-            return user;
+            return userSaved;
         } catch (IOException e) {
             log.error("Erro ao atribuir foto padrão ao usuário", e);
             throw new StorageException("Falha ao ler metadados do arquivo");

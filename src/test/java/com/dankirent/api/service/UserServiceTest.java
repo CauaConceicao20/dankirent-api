@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -39,6 +40,9 @@ class UserServiceTest {
 
     @Mock
     private StorageService storageService;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserService service;
@@ -71,6 +75,7 @@ class UserServiceTest {
 
     @Test
     void shouldCreatUser_whenDataAreValid() throws IOException {
+        when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
         when(groupService.getByName("USER")).thenReturn(group);
         when(storageService.getMetaData("default_user_photo.png")).thenReturn(fileMetaData);
         when(repository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -87,6 +92,7 @@ class UserServiceTest {
 
     @Test
     void shouldThrowEntityNotFoundException_whenGroupNotFoundOnCreateUser() {
+        when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
         when(groupService.getByName(anyString())).thenThrow(new EntityNotFoundException());
 
         assertThrows(EntityNotFoundException.class, () ->
@@ -98,6 +104,7 @@ class UserServiceTest {
 
     @Test
     void shouldThrowStorageException_whenGetMetaDataFailsOnCreateUser() throws IOException {
+        when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
         when(groupService.getByName("USER")).thenReturn(group);
         when(repository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(storageService.getMetaData(anyString())).thenThrow(new IOException());
