@@ -1,10 +1,12 @@
 package com.dankirent.api.controller.user;
 
+import com.dankirent.api.config.SecurityConfig;
 import com.dankirent.api.model.user.dto.UserRequestDto;
 import com.dankirent.api.model.user.dto.UserResponseDto;
 import com.dankirent.api.model.user.dto.UserUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
@@ -19,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 @Tag(name = "User")
+@SecurityRequirement(name = SecurityConfig.SECURITY)
 public interface UserControllerDoc {
 
     @Operation(summary = "Create a new user")
