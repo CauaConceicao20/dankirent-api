@@ -1,6 +1,6 @@
 package com.dankirent.api.config;
 
-import com.dankirent.api.infrastructure.securtiy.SecurityFilter;
+import com.dankirent.api.infrastructure.security.SecurityFilter;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletResponse;

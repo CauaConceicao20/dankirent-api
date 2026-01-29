@@ -1,4 +1,4 @@
-package com.dankirent.api.infrastructure.securtiy;
+package com.dankirent.api.infrastructure.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,7 +1,7 @@
 package com.dankirent.api.service;
 
-import com.dankirent.api.infrastructure.securtiy.JwtService;
-import com.dankirent.api.infrastructure.securtiy.UserDetailsImpl;
+import com.dankirent.api.infrastructure.security.JwtService;
+import com.dankirent.api.infrastructure.security.UserDetailsImpl;
 import com.dankirent.api.model.auth.LoginRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

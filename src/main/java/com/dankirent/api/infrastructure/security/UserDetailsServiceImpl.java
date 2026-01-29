@@ -1,4 +1,4 @@
-package com.dankirent.api.infrastructure.securtiy;
+package com.dankirent.api.infrastructure.security;
 
 import com.dankirent.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
