@@ -38,7 +38,7 @@ public class PhotoServiceTest {
     @BeforeEach
     void setUp() {
         user = new User(UUID.randomUUID(), "FirstNameDefault", "LastNameDefault", "000.174.205-12", "71922224444",
-                "teste122@gmail.com", "password123", photo, new HashSet<>());
+                "teste122@gmail.com", "password123", photo, null, new HashSet<>());
         photo = new Photo(UUID.randomUUID(), user, "photo.png", "image/png", 1L, LocalDateTime.now());
 
         photoDataUpdate = new Photo(null, null, "updated_photo.png", "image/png", 2L, null);

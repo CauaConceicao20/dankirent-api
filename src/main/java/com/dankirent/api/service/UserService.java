@@ -7,6 +7,7 @@ import com.dankirent.api.model.photo.Photo;
 import com.dankirent.api.model.photo.dto.PhotoUpdateDto;
 import com.dankirent.api.model.user.User;
 import com.dankirent.api.model.user.UserGroup;
+import com.dankirent.api.model.wallet.Wallet;
 import com.dankirent.api.repository.UserRepository;
 import com.dankirent.api.service.interfaces.CrudOperations;
 import jakarta.persistence.EntityNotFoundException;
@@ -33,6 +34,7 @@ public class UserService implements CrudOperations<User> {
     private final StorageService storageService;
     private final GroupService groupService;
     private final PasswordEncoder passwordEncoder;
+    private final WalletService walletService;
 
     @Override
     @Transactional
@@ -43,6 +45,7 @@ public class UserService implements CrudOperations<User> {
             assignDefaultGroup(user);
             User userSaved = repository.save(user);
             assignDefaultPhoto(userSaved);
+            assignDefaultWallet(userSaved);
             log.info("Usuário criado com sucesso: id={}", user.getId());
             return userSaved;
         } catch (IOException e) {
@@ -116,5 +119,11 @@ public class UserService implements CrudOperations<User> {
         FileMetaData metaData = storageService.getMetaData(DEFAULT_IMAGE_NAME);
         Photo photo = new Photo(null, user, metaData.getFileName(), DEFAULT_CONTENT_TYPE, metaData.getSize(), metaData.getCreatedAt());
         photoService.create(photo);
+    }
+
+    private void assignDefaultWallet(User user) {
+       log.debug("Atribuindo carteira padrão ao usuário: {}", user.getFirstName());
+       Wallet wallet = new Wallet(null, user, 0.0);
+       walletService.create(wallet);
     }
 }

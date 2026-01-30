@@ -3,6 +3,7 @@ package com.dankirent.api.model.user;
 import com.dankirent.api.model.photo.Photo;
 import com.dankirent.api.model.user.dto.UserRequestDto;
 import com.dankirent.api.model.user.dto.UserUpdateDto;
+import com.dankirent.api.model.wallet.Wallet;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,6 +44,9 @@ public class User {
 
     @OneToOne(mappedBy = "user", optional = false)
     private Photo photo;
+
+    @OneToOne(mappedBy = "user", optional = false)
+    private Wallet wallet;
 
     @OneToMany(mappedBy = "id.user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserGroup> userGroups = new HashSet<UserGroup>();

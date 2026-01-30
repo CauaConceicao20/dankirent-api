@@ -5,6 +5,7 @@ import com.dankirent.api.infrastructure.storage.FileMetaData;
 import com.dankirent.api.model.group.Group;
 import com.dankirent.api.model.photo.Photo;
 import com.dankirent.api.model.user.User;
+import com.dankirent.api.model.wallet.Wallet;
 import com.dankirent.api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +43,9 @@ class UserServiceTest {
     private StorageService storageService;
 
     @Mock
+    private WalletService walletService;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
@@ -61,7 +65,7 @@ class UserServiceTest {
         existingPhoto = new Photo(UUID.randomUUID(), user, "old-photo.png", "", 1L, LocalDateTime.now());
 
         user = new User(UUID.randomUUID(), "FirstNameDefault", "LastNameDefault", "000.174.205-12", "71922224444",
-                "teste122@gmail.com", "password123", existingPhoto, new HashSet<>());
+                "teste122@gmail.com", "password123", existingPhoto, new Wallet(UUID.randomUUID(), user, 0.0), new HashSet<>());
 
         group = new Group(UUID.randomUUID(), "USER", "Default user group",
                 new HashSet<>(), new HashSet<>());
@@ -70,7 +74,7 @@ class UserServiceTest {
                 LocalDateTime.of(2023, 1, 1, 12, 0));
 
         userDataUpdate = new User(null, "UpdatedFirstName", "UpdatedLastName", null, "71922224444",
-                null, null, null, new HashSet<>());
+                null, null, null, null, new HashSet<>());
     }
 
     @Test
