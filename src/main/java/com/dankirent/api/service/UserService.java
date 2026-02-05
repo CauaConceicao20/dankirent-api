@@ -40,18 +40,13 @@ public class UserService implements CrudOperations<User> {
     @Transactional
     public User create(User user) {
         log.debug("Criando novo usuário");
-        try {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            assignDefaultGroup(user);
-            User userSaved = repository.save(user);
-            assignDefaultPhoto(userSaved);
-            assignDefaultWallet(userSaved);
-            log.info("Usuário criado com sucesso: id={}", user.getId());
-            return userSaved;
-        } catch (IOException e) {
-            log.error("Erro ao atribuir foto padrão ao usuário", e);
-            throw new StorageException("Falha ao ler metadados do arquivo");
-        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        assignDefaultGroup(user);
+        User userSaved = repository.save(user);
+        assignDefaultPhoto(userSaved);
+        assignDefaultWallet(userSaved);
+        log.info("Usuário criado com sucesso: id={}", user.getId());
+        return userSaved;
     }
 
     @Override
@@ -112,7 +107,7 @@ public class UserService implements CrudOperations<User> {
         user.getUserGroups().add(userGroup);
     }
 
-    private void assignDefaultPhoto(User user) throws IOException {
+    private void assignDefaultPhoto(User user) {
         log.debug("Atribuindo foto padrão ao usuário: {}", user.getFirstName());
         final String DEFAULT_IMAGE_NAME = "default_user_photo.png";
         final String DEFAULT_CONTENT_TYPE = "image/png";
@@ -122,8 +117,8 @@ public class UserService implements CrudOperations<User> {
     }
 
     private void assignDefaultWallet(User user) {
-       log.debug("Atribuindo carteira padrão ao usuário: {}", user.getFirstName());
-       Wallet wallet = new Wallet(null, user, 0.0);
-       walletService.create(wallet);
+        log.debug("Atribuindo carteira padrão ao usuário: {}", user.getFirstName());
+        Wallet wallet = new Wallet(null, user, 0.0);
+        walletService.create(wallet);
     }
 }

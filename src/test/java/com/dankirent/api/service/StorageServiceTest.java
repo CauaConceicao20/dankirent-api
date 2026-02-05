@@ -2,10 +2,12 @@ package com.dankirent.api.service;
 
 import com.dankirent.api.exception.personalized.StorageException;
 import com.dankirent.api.infrastructure.storage.FileMetaData;
+import com.dankirent.api.service.interfaces.FileStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedStatic;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,27 +24,28 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class StorageServiceTest {
 
+    @Mock
+    private FileStorage fileStorage;
+
+    @InjectMocks
     private StorageService storageService;
 
     MultipartFile file;
-    Path pathInvalid;
 
     @BeforeEach
     void setUp() {
-        storageService = new StorageService("target/test-uploads");
-        pathInvalid = mock(Path.class);
         file = new MockMultipartFile("file", "test.txt", "text/plain", "Hello World".getBytes());
-
     }
 
     @Test
     void shouldUploadFileSuccessfully_WhenValidFileProvided() throws IOException {
-        String result = storageService.uploadImage(file);
+        String uploadedFileName = storageService.uploadImage(file);
 
-        Path uploadedFile = Paths.get("target/test-uploads").resolve(result);
-        assertTrue(Files.exists(uploadedFile));
+        assertNotEquals(file.getName(), uploadedFileName);
 
-        Files.deleteIfExists(uploadedFile);
+        verify(fileStorage, times(1)).uploadFile(any(MultipartFile.class), anyString());
+
+        Files.deleteIfExists(Paths.get("target/test-uploads").resolve(uploadedFileName));
     }
 
     @Test
@@ -65,23 +68,17 @@ class StorageServiceTest {
     }
 
     @Test
-    void shouldThrowStorageException_WhenFilesCreateDirectoriesFails() throws IOException {
-        try(MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)){
-            filesMockedStatic.when(() -> Files.createDirectories(any(Path.class))).thenThrow(IOException.class);
-
-            assertThrows(StorageException.class, () ->
-                    storageService.uploadImage(file));
-        }
-    }
-
-    @Test
     void shouldGetMetaDataSuccessfully_WhenValidFileNameProvided() throws IOException {
         String uploadedFileName = storageService.uploadImage(file);
+        when(fileStorage.getMetaData(anyString())).thenReturn(
+                new FileMetaData(uploadedFileName, file.getSize(), "text/plain", null));
 
         FileMetaData metaData = storageService.getMetaData(uploadedFileName);
 
         assertEquals(uploadedFileName, metaData.getFileName());
         assertEquals(file.getSize(), metaData.getSize());
+
+        verify(fileStorage).uploadFile(file, uploadedFileName);
 
         Files.deleteIfExists(Paths.get("target/test-uploads").resolve(uploadedFileName));
     }
@@ -93,16 +90,9 @@ class StorageServiceTest {
         storageService.deleteFile(uploadedFileName);
 
         Path uploadedFile = Paths.get("target/test-uploads").resolve(uploadedFileName);
+
+        verify(fileStorage).deleteFile(uploadedFileName);
+
         assertFalse(Files.exists(uploadedFile));
-    }
-
-    @Test
-    void shouldThrowStorageException_WhenDeletingNonExistentFile() {
-        try(MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)){
-            filesMockedStatic.when(() -> Files.deleteIfExists(any(Path.class))).thenThrow(IOException.class);
-
-            assertThrows(StorageException.class, () ->
-                    storageService.deleteFile(anyString()));
-        }
     }
 }

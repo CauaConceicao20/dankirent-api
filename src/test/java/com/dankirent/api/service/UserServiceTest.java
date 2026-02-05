@@ -106,20 +106,6 @@ class UserServiceTest {
         verify(repository, never()).save(any(User.class));
     }
 
-    @Test
-    void shouldThrowStorageException_whenGetMetaDataFailsOnCreateUser() throws IOException {
-        when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
-        when(groupService.getByName("USER")).thenReturn(group);
-        when(repository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(storageService.getMetaData(anyString())).thenThrow(new IOException());
-
-        assertThrows(StorageException.class, () ->
-            service.create(user));
-
-        verify(groupService).getByName("USER");
-        verify(repository).save(any(User.class));
-        verify(storageService).getMetaData(anyString());
-    }
 
     @Test
     void shouldGetAllUsers() {
