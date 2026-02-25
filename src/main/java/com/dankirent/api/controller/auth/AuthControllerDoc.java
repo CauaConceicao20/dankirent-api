@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +23,7 @@ public interface AuthControllerDoc {
     @ApiResponse(responseCode = "200", description = "User authenticated successfully")
     @ApiResponse(responseCode = "400", description = "Bad request")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto body);
+    ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto body, HttpServletResponse response);
 
     @Operation(summary = "User registration")
     @ApiResponse(responseCode = "201", description = "User registered successfully")
