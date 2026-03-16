@@ -2,6 +2,7 @@ package com.dankirent.api.infrastructure.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
 
@@ -44,17 +46,15 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     }
 
-
     private String recoverToken(HttpServletRequest request) {
-        log.debug("Recuperando token JWT do header Authorization");
-        var authHeader = request.getHeader("Authorization");
+        log.debug("Recuperando token JWT do cookie");
+        Cookie cookie = WebUtils.getCookie(request, "sessionToken");
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            log.debug("JWT encontrado no header Authorization");
-            return authHeader.substring(7);
+        if (cookie != null) {
+            log.debug("Token JWT recuperado com sucesso");
+            return cookie.getValue();
         }
-
-        log.debug("JWT não encontrado no header Authorization");
+        log.warn("Nenhum token JWT encontrado no cookie");
         return null;
     }
 }
