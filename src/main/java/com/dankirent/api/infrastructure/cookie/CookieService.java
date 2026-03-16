@@ -27,4 +27,18 @@ public class CookieService {
         log.debug("Cookie de acesso adicionado");
         return cookie;
     }
+
+    public ResponseCookie removeAccessTokenInCookie(HttpServletResponse response) {
+        log.debug("Removendo cookie de acesso ao response");
+        ResponseCookie cookie = ResponseCookie.from("sessionToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+
+        log.debug("Cookie de acesso removido");
+        return cookie;
+    }
 }

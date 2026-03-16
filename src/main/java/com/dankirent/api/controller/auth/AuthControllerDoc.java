@@ -31,4 +31,9 @@ public interface AuthControllerDoc {
     @ApiResponse(responseCode = "409", description = "User already exists")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     ResponseEntity<UserResponseDto> register(@RequestBody @Valid UserRequestDto body);
+
+    @Operation(summary = "User logout")
+    @ApiResponse(responseCode = "200", description = "User logged out successfully")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    ResponseEntity<Void> logout(HttpServletResponse response);
 }

@@ -41,4 +41,11 @@ public class AuthController implements AuthControllerDoc {
         User user = userService.create(new User(body));
         return ResponseEntity.ok(new UserResponseDto(user));
     }
+
+    @PostMapping("v1/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        ResponseCookie cookie = cookieService.removeAccessTokenInCookie(response);
+        response.addHeader("Set-Cookie", cookie.toString());
+        return ResponseEntity.noContent().build();
+    }
 }
