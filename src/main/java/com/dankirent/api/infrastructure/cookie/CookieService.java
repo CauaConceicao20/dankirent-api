@@ -18,10 +18,10 @@ public class CookieService {
         log.debug("Adicionando cookie de acesso ao response");
         ResponseCookie cookie = ResponseCookie.from("sessionToken", token)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
                 .maxAge(Duration.ofHours(1))
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         log.debug("Cookie de acesso adicionado");
@@ -32,10 +32,10 @@ public class CookieService {
         log.debug("Removendo cookie de acesso ao response");
         ResponseCookie cookie = ResponseCookie.from("sessionToken", "")
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
                 .maxAge(0)
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         log.debug("Cookie de acesso removido");

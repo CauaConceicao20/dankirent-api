@@ -1,8 +1,10 @@
 package com.dankirent.api.controller.auth;
 
 import com.dankirent.api.config.SecurityConfig;
+import com.dankirent.api.infrastructure.security.UserDetailsImpl;
 import com.dankirent.api.model.auth.LoginRequestDto;
 import com.dankirent.api.model.auth.LoginResponseDto;
+import com.dankirent.api.model.auth.UserLoggedResponseDto;
 import com.dankirent.api.model.user.dto.UserRequestDto;
 import com.dankirent.api.model.user.dto.UserResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Auth")
@@ -31,6 +34,12 @@ public interface AuthControllerDoc {
     @ApiResponse(responseCode = "409", description = "User already exists")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     ResponseEntity<UserResponseDto> register(@RequestBody @Valid UserRequestDto body);
+
+    @Operation(summary = "Get authenticated user information")
+    @ApiResponse(responseCode = "200", description = "User information retrieved successfully")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    ResponseEntity<UserLoggedResponseDto> getMe(@AuthenticationPrincipal UserDetailsImpl userDetails);
 
     @Operation(summary = "User logout")
     @ApiResponse(responseCode = "200", description = "User logged out successfully")

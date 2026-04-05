@@ -1,9 +1,11 @@
 package com.dankirent.api.controller.auth;
 
 import com.dankirent.api.infrastructure.cookie.CookieService;
+import com.dankirent.api.infrastructure.security.UserDetailsImpl;
 import com.dankirent.api.model.auth.LoginRequestDto;
 import com.dankirent.api.model.auth.LoginResponseDto;
 import com.dankirent.api.model.user.User;
+import com.dankirent.api.model.auth.UserLoggedResponseDto;
 import com.dankirent.api.model.user.dto.UserRequestDto;
 import com.dankirent.api.model.user.dto.UserResponseDto;
 import com.dankirent.api.service.AuthService;
@@ -13,10 +15,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/auth")
@@ -40,6 +40,11 @@ public class AuthController implements AuthControllerDoc {
     public ResponseEntity<UserResponseDto> register(@RequestBody @Valid UserRequestDto body) {
         User user = userService.create(new User(body));
         return ResponseEntity.ok(new UserResponseDto(user));
+    }
+
+    @GetMapping("v1/me")
+    public ResponseEntity<UserLoggedResponseDto> getMe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+       return ResponseEntity.ok(new UserLoggedResponseDto(userDetails));
     }
 
     @PostMapping("v1/logout")

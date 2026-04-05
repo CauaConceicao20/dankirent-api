@@ -1,6 +1,8 @@
 package com.dankirent.api.model.user.dto;
 
+import com.dankirent.api.infrastructure.security.UserDetailsImpl;
 import com.dankirent.api.model.user.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.UUID;
 

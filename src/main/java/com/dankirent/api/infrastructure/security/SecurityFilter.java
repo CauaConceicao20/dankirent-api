@@ -50,7 +50,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         log.debug("Recuperando token JWT do cookie");
         Cookie cookie = WebUtils.getCookie(request, "sessionToken");
 
-        if (cookie != null) {
+        if (cookie != null  && !cookie.getValue().isEmpty()) {
             log.debug("Token JWT recuperado com sucesso");
             return cookie.getValue();
         }
