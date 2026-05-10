@@ -7,6 +7,7 @@ import com.dankirent.api.model.wallet.Wallet;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -33,6 +34,9 @@ public class User {
     @Column(name = "cpf", unique = true, nullable = false)
     private String cpf;
 
+    @Column(name = "birthday", unique = true, nullable = false)
+    private LocalDate birthday;
+
     @Column(name = "phone_number")
     private String phoneNumber;
 
@@ -55,6 +59,7 @@ public class User {
         this.firstName = dto.firstName();
         this.lastName = dto.lastName();
         this.cpf = dto.cpf();
+        this.birthday = dto.birthday();
         this.phoneNumber = dto.phone();
         this.email = dto.email();
         this.password = dto.password();

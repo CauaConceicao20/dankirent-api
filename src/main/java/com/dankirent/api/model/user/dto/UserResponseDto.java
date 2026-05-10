@@ -1,9 +1,8 @@
 package com.dankirent.api.model.user.dto;
 
-import com.dankirent.api.infrastructure.security.UserDetailsImpl;
 import com.dankirent.api.model.user.User;
-import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 public record UserResponseDto(
@@ -11,8 +10,10 @@ public record UserResponseDto(
         String firstName,
         String lastName,
         String cpf,
+        LocalDate birthday,
         String phone,
-        String email
+        String email,
+        String photo_name
 ) {
 
     public UserResponseDto(User user) {
@@ -21,8 +22,10 @@ public record UserResponseDto(
                 user.getFirstName(),
                 user.getLastName(),
                 user.getCpf(),
+                user.getBirthday(),
                 user.getPhoneNumber(),
-                user.getEmail()
+                user.getEmail(),
+                user.getPhoto().getFileName()
         );
     }
 }

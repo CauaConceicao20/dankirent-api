@@ -42,6 +42,14 @@ public class UserController implements UserControllerDoc {
     }
 
     @Override
+    @GetMapping("/v1/getById/{id}")
+    public ResponseEntity<UserResponseDto> getById(@PathVariable("id") String id) {
+        User user = service.getById(UUID.fromString(id));
+        System.out.println(user.getPhoto().getFileName());
+        return ResponseEntity.ok(new UserResponseDto(user));
+    }
+
+    @Override
     @PutMapping("/v1/update/{id}")
     public ResponseEntity<UserResponseDto> update(@PathVariable("id") String id, @RequestBody @Valid UserUpdateDto body) {
         User updatedUser = service.update(UUID.fromString(id), new User(body));

@@ -2,10 +2,14 @@ package com.dankirent.api.model.user.dto;
 
 import com.dankirent.api.exception.personalized.FieldValidationException;
 import com.dankirent.api.model.user.validation.annotations.Password;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.br.CPF;
+
+import java.time.LocalDate;
 
 public record UserRequestDto(
 
@@ -19,6 +23,10 @@ public record UserRequestDto(
 
         @CPF(message = "CPF inválido")
         String cpf,
+
+        @JsonFormat(pattern = "dd/MM/yyyy")
+        @Past(message = "Data de nascimento deve ser no passado")   
+        LocalDate birthday,
 
         String phone,
 

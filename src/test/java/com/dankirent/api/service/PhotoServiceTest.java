@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +38,7 @@ public class PhotoServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = new User(UUID.randomUUID(), "FirstNameDefault", "LastNameDefault", "000.174.205-12", "71922224444",
+        user = new User(UUID.randomUUID(), "FirstNameDefault", "LastNameDefault", "000.174.205-12", LocalDate.of(2004, 2, 23), "71922224444",
                 "teste122@gmail.com", "password123", photo, null, new HashSet<>());
         photo = new Photo(UUID.randomUUID(), user, "photo.png", "image/png", 1L, LocalDateTime.now());
 

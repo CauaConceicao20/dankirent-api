@@ -36,6 +36,12 @@ public interface UserControllerDoc {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     ResponseEntity<List<UserResponseDto>> getAll();
 
+    @Operation(summary = "Get a user by ID")
+    @ApiResponse(responseCode = "200", description = "User retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    ResponseEntity<UserResponseDto> getById(@PathVariable("id") String id); 
+
     @Operation(summary = "Update an existing user")
     @ApiResponse(responseCode = "200", description = "User updated successfully")
     @ApiResponse(responseCode = "400", description = "Invalid request body")

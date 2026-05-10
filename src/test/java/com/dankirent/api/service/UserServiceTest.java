@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -55,8 +56,10 @@ class UserServiceTest {
     Group group;
     FileMetaData fileMetaData;
     User userDataUpdate;
+    Wallet wallet;
     Photo existingPhoto;
     MultipartFile file;
+
 
     @BeforeEach
     void setUp() {
@@ -64,8 +67,10 @@ class UserServiceTest {
 
         existingPhoto = new Photo(UUID.randomUUID(), user, "old-photo.png", "", 1L, LocalDateTime.now());
 
-        user = new User(UUID.randomUUID(), "FirstNameDefault", "LastNameDefault", "000.174.205-12", "71922224444",
-                "teste122@gmail.com", "password123", existingPhoto, new Wallet(UUID.randomUUID(), user, 0.0), new HashSet<>());
+        wallet = new Wallet(UUID.randomUUID(), user, 0.0);
+
+        user = new User(UUID.randomUUID(), "FirstNameDefault", "LastNameDefault", "000.174.205-12", LocalDate.of(2004, 2, 23),"71922224444",
+                "teste122@gmail.com", "password123", existingPhoto, wallet, new HashSet<>());
 
         group = new Group(UUID.randomUUID(), "USER", "Default user group",
                 new HashSet<>(), new HashSet<>());
@@ -73,8 +78,8 @@ class UserServiceTest {
         fileMetaData = new FileMetaData("default_user_photo.png", 766, "image/png",
                 LocalDateTime.of(2023, 1, 1, 12, 0));
 
-        userDataUpdate = new User(null, "UpdatedFirstName", "UpdatedLastName", null, "71922224444",
-                null, null, null, null, new HashSet<>());
+        userDataUpdate = new User(null, "UpdatedFirstName", "UpdatedLastName", null, LocalDate.of(2004, 2, 23),"71922224444",
+                null,null, null, wallet, new HashSet<>());
     }
 
     @Test

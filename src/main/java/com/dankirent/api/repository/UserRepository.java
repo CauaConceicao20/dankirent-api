@@ -19,4 +19,13 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     WHERE u.email = :email
     """)
     Optional<User> findByEmailWithGroups(@Param("email") String email);
+
+
+    @Query("""
+    SELECT u
+    FROM User u
+    LEFT JOIN FETCH u.photo p
+    WHERE u.email = :email
+    """)
+    Optional<User> findByUserWithPhoto(@Param("email") String email);
 }

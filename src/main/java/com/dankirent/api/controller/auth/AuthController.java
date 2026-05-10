@@ -27,6 +27,7 @@ public class AuthController implements AuthControllerDoc {
     private final UserService userService;
     private final CookieService cookieService;
 
+    @Override
     @PostMapping("v1/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto body, HttpServletResponse response) {
         String token = authService.authenticate(body);
@@ -36,17 +37,20 @@ public class AuthController implements AuthControllerDoc {
         return ResponseEntity.ok(new LoginResponseDto(token));
     }
 
+    @Override
     @PostMapping("v1/register")
     public ResponseEntity<UserResponseDto> register(@RequestBody @Valid UserRequestDto body) {
         User user = userService.create(new User(body));
         return ResponseEntity.ok(new UserResponseDto(user));
     }
 
+    @Override
     @GetMapping("v1/me")
     public ResponseEntity<UserLoggedResponseDto> getMe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
        return ResponseEntity.ok(new UserLoggedResponseDto(userDetails));
     }
 
+    @Override
     @PostMapping("v1/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         ResponseCookie cookie = cookieService.removeAccessTokenInCookie(response);

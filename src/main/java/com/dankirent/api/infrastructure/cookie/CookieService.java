@@ -21,7 +21,7 @@ public class CookieService {
                 .secure(false)
                 .path("/")
                 .maxAge(Duration.ofHours(1))
-                .sameSite("None")
+                .sameSite("Lax")
                 .build();
 
         log.debug("Cookie de acesso adicionado");
@@ -35,7 +35,7 @@ public class CookieService {
                 .secure(false)
                 .path("/")
                 .maxAge(0)
-                .sameSite("None")
+                .sameSite("Lax")
                 .build();
 
         log.debug("Cookie de acesso removido");
