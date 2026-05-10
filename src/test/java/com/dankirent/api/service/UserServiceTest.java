@@ -86,7 +86,7 @@ class UserServiceTest {
     void shouldCreatUser_whenDataAreValid() throws IOException {
         when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
         when(groupService.getByName("USER")).thenReturn(group);
-        when(storageService.getMetaData("default_user_photo.png")).thenReturn(fileMetaData);
+        when(storageService.getMetaData("default_user_photo.jpg")).thenReturn(fileMetaData);
         when(repository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         User result = service.create(user);
