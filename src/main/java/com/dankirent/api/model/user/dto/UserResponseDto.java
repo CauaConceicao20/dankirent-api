@@ -1,6 +1,7 @@
 package com.dankirent.api.model.user.dto;
 
 import com.dankirent.api.model.user.User;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -10,10 +11,10 @@ public record UserResponseDto(
         String firstName,
         String lastName,
         String cpf,
+        @JsonFormat(pattern = "dd/MM/yyyy")
         LocalDate birthday,
         String phone,
-        String email,
-        String photo_name
+        String email
 ) {
 
     public UserResponseDto(User user) {
@@ -24,8 +25,7 @@ public record UserResponseDto(
                 user.getCpf(),
                 user.getBirthday(),
                 user.getPhoneNumber(),
-                user.getEmail(),
-                user.getPhoto().getFileName()
+                user.getEmail()
         );
     }
 }

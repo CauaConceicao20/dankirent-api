@@ -25,7 +25,8 @@ public record UserRequestDto(
         String cpf,
 
         @JsonFormat(pattern = "dd/MM/yyyy")
-        @Past(message = "Data de nascimento deve ser no passado")   
+        @Past(message = "Data de nascimento deve ser no passado")
+        @NotBlank
         LocalDate birthday,
 
         String phone,

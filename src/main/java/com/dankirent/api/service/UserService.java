@@ -109,8 +109,8 @@ public class UserService implements CrudOperations<User> {
 
     private void assignDefaultPhoto(User user) {
         log.debug("Atribuindo foto padrão ao usuário: {}", user.getFirstName());
-        final String DEFAULT_IMAGE_NAME = "default_user_photo.png";
-        final String DEFAULT_CONTENT_TYPE = "image/png";
+        final String DEFAULT_IMAGE_NAME = "default_user_photo.jpg";
+        final String DEFAULT_CONTENT_TYPE = "image/jpg";
         FileMetaData metaData = storageService.getMetaData(DEFAULT_IMAGE_NAME);
         Photo photo = new Photo(null, user, metaData.getFileName(), DEFAULT_CONTENT_TYPE, metaData.getSize(), metaData.getCreatedAt());
         photoService.create(photo);
